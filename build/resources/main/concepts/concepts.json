@@ -1,0 +1,170 @@
+[
+  {
+    "id": "c-fs-001",
+    "category": "파일시스템",
+    "title": "리눅스 파일시스템 계층 구조 (FHS)",
+    "summary": "리눅스는 Filesystem Hierarchy Standard(FHS)에 따라 디렉토리가 구성됩니다.",
+    "sections": [
+      {
+        "heading": "핵심 디렉토리",
+        "content": "/ (루트): 최상위 디렉토리\n/bin: 기본 명령어 바이너리 (ls, cp, mv 등)\n/sbin: 시스템 관리 명령어 (fdisk, ifconfig 등)\n/etc: 시스템 설정 파일\n/home: 일반 사용자 홈 디렉토리\n/root: root 사용자 홈 디렉토리\n/var: 가변 데이터 (로그, 메일, 스풀)\n/tmp: 임시 파일 (재부팅 시 삭제)\n/usr: 사용자 프로그램 및 데이터\n/proc: 가상 파일시스템 (프로세스/커널 정보)\n/dev: 장치 파일\n/mnt, /media: 마운트 포인트"
+      },
+      {
+        "heading": "핵심 명령어 요약",
+        "content": "ls -al          : 숨김 파일 포함 상세 목록\nfind / -name f  : 이름으로 파일 검색\ndf -h           : 파일시스템 사용량\ndu -sh [dir]    : 디렉토리 사용량\nstat [file]     : 파일 상세 정보(inode 포함)\nfile [file]     : 파일 타입 확인"
+      }
+    ],
+    "relatedQuestionIds": ["fs-001", "fs-002", "fs-003", "fs-004", "fs-005"]
+  },
+  {
+    "id": "c-perm-001",
+    "category": "권한관리",
+    "title": "리눅스 파일 권한 (Permission)",
+    "summary": "리눅스의 파일 권한은 소유자(u), 그룹(g), 기타(o) 3단계로 관리됩니다.",
+    "sections": [
+      {
+        "heading": "권한 표기법",
+        "content": "rwxrwxrwx → 소유자/그룹/기타 각 3비트\nr(읽기)=4, w(쓰기)=2, x(실행)=1\n예: rwxr-xr-- = 754\n\n특수 권한:\nSetUID  (4xxx): 실행 시 소유자 권한으로 실행\nSetGID  (2xxx): 실행 시 그룹 권한으로 실행\nSticky  (1xxx): 디렉토리 내 본인 파일만 삭제 가능"
+      },
+      {
+        "heading": "핵심 명령어",
+        "content": "chmod 755 file          : 숫자로 권한 설정\nchmod u+x,g-w file      : 기호로 권한 변경\nchown user:group file   : 소유자/그룹 변경\nchgrp group file        : 그룹만 변경\numask 022               : 기본 마스크 설정 (파일→644, 디렉토리→755)"
+      },
+      {
+        "heading": "umask 계산법",
+        "content": "파일 최대권한 666 - umask = 실제권한\n디렉토리 최대권한 777 - umask = 실제권한\numask 022 → 파일: 644, 디렉토리: 755\numask 027 → 파일: 640, 디렉토리: 750"
+      }
+    ],
+    "relatedQuestionIds": ["perm-001", "perm-002", "perm-003", "perm-004"]
+  },
+  {
+    "id": "c-proc-001",
+    "category": "프로세스",
+    "title": "프로세스 관리",
+    "summary": "리눅스의 모든 프로세스는 PID를 가지며, init/systemd(PID 1)가 최상위 부모입니다.",
+    "sections": [
+      {
+        "heading": "프로세스 상태",
+        "content": "R (Running)   : 실행 중 또는 실행 대기\nS (Sleeping)  : 인터럽트 가능한 대기\nD (Disk sleep): 인터럽트 불가 대기 (I/O 대기)\nZ (Zombie)    : 종료됐지만 부모가 회수 안 함\nT (Stopped)   : 일시 중지 (Ctrl+Z)"
+      },
+      {
+        "heading": "핵심 명령어",
+        "content": "ps -ef              : 모든 프로세스 전체 형식 출력\nps aux              : BSD 스타일 전체 프로세스\ntop / htop          : 실시간 프로세스 모니터링\npgrep [name]        : 이름으로 PID 검색\nkill -9 [PID]       : 강제 종료 (SIGKILL)\nkill -15 [PID]      : 정상 종료 요청 (SIGTERM)\nkillall [name]      : 이름으로 프로세스 종료\nnice -n 10 cmd      : 우선순위 낮추고 실행\nrenice -5 -p [PID]  : 실행 중 프로세스 우선순위 변경"
+      },
+      {
+        "heading": "포그라운드/백그라운드",
+        "content": "cmd &           : 백그라운드 실행\nCtrl+Z          : 현재 프로세스 일시 중지\nbg              : 중지된 프로세스를 백그라운드로\nfg              : 백그라운드 프로세스를 포그라운드로\njobs            : 백그라운드 작업 목록\nnohup cmd &     : 로그아웃 후에도 계속 실행"
+      }
+    ],
+    "relatedQuestionIds": ["proc-001", "proc-002", "proc-003", "proc-004", "proc-005"]
+  },
+  {
+    "id": "c-net-001",
+    "category": "네트워크",
+    "title": "네트워크 설정 및 관리",
+    "summary": "CentOS 7 이후로 네트워크 설정은 ip 명령어와 NetworkManager가 표준입니다.",
+    "sections": [
+      {
+        "heading": "IP 관련 명령어",
+        "content": "ip addr / ip a          : 인터페이스 IP 정보\nip link                 : 인터페이스 링크 상태\nip route / ip r         : 라우팅 테이블\nip addr add IP/PREFIX dev eth0  : IP 추가\nip link set eth0 up/down        : 인터페이스 활성/비활성"
+      },
+      {
+        "heading": "연결 확인 명령어",
+        "content": "ping -c 3 [host]    : ICMP 3회 전송\ntraceroute [host]   : 경로 추적\nmtr [host]          : 실시간 경로 추적\nss -tlnp            : LISTEN 포트 목록 (소켓 통계)\nnetstat -tlnp       : 동일 (구식, net-tools 필요)\nnslookup/dig [host] : DNS 조회\ncurl -I [url]       : HTTP 헤더만 요청"
+      },
+      {
+        "heading": "방화벽 (firewalld)",
+        "content": "firewall-cmd --state                    : 상태 확인\nfirewall-cmd --list-all                 : 현재 설정 전체\nfirewall-cmd --add-port=80/tcp --permanent : 포트 영구 허용\nfirewall-cmd --reload                   : 설정 재로드"
+      }
+    ],
+    "relatedQuestionIds": ["net-001", "net-002", "net-003", "net-004", "net-005"]
+  },
+  {
+    "id": "c-text-001",
+    "category": "텍스트처리",
+    "title": "텍스트 처리 명령어 (grep, awk, sed, cut)",
+    "summary": "리눅스 1급 실기에서 가장 자주 출제되는 텍스트 처리 도구들입니다.",
+    "sections": [
+      {
+        "heading": "grep - 패턴 검색",
+        "content": "grep 'pattern' file     : 패턴 포함 줄 출력\ngrep -n                 : 줄 번호 포함\ngrep -i                 : 대소문자 무시\ngrep -v                 : 패턴 미포함 줄 출력 (역매칭)\ngrep -E 'a|b'           : 확장 정규식 (egrep)\ngrep -r 'pat' /dir      : 디렉토리 재귀 검색\ngrep -c                 : 매칭된 줄 수만 출력"
+      },
+      {
+        "heading": "awk - 필드 처리",
+        "content": "awk '{print $1}' file       : 첫 번째 필드 출력\nawk -F: '{print $1}' file   : 구분자를 :로 지정\nawk '$3>1000' file          : 조건 필터링\nawk 'NR==3' file            : 3번째 줄만 출력\nawk '{sum+=$3} END{print sum}' file : 합계 계산\nNR=현재 줄 번호, NF=현재 줄 필드 수"
+      },
+      {
+        "heading": "sed - 스트림 편집",
+        "content": "sed 's/old/new/' file       : 첫 번째 old를 new로\nsed 's/old/new/g' file      : 모든 old를 new로\nsed -i 's/old/new/g' file   : 파일 직접 수정\nsed -n '3p' file            : 3번째 줄만 출력\nsed '/pattern/d' file       : 패턴 줄 삭제\nsed '3,5d' file             : 3~5번 줄 삭제"
+      },
+      {
+        "heading": "cut / sort / uniq",
+        "content": "cut -d: -f1,3 file      : :구분, 1번째와 3번째 필드\ncut -c1-5 file          : 1~5번째 문자\nsort file               : 알파벳 오름차순 정렬\nsort -n file            : 숫자 정렬\nsort -r file            : 역순 정렬\nsort -k2 file           : 2번째 필드 기준 정렬\nuniq file               : 인접 중복 제거\nuniq -c file            : 중복 횟수도 출력"
+      }
+    ],
+    "relatedQuestionIds": ["text-001", "text-002", "text-003", "text-004", "text-005"]
+  },
+  {
+    "id": "c-arch-001",
+    "category": "아카이브/압축",
+    "title": "아카이브 및 압축 (tar, gzip, bzip2)",
+    "summary": "tar은 파일을 묶고, gzip/bzip2/xz는 압축합니다. 보통 함께 사용합니다.",
+    "sections": [
+      {
+        "heading": "tar 주요 옵션",
+        "content": "-c : 아카이브 생성 (create)\n-x : 압축 해제 (extract)\n-t : 목록 조회 (list)\n-v : 상세 출력 (verbose)\n-f : 파일명 지정 (file) - 항상 마지막에!\n-z : gzip 압축/해제\n-j : bzip2 압축/해제\n-J : xz 압축/해제\n-C : 압축 해제 디렉토리 지정"
+      },
+      {
+        "heading": "자주 쓰는 tar 명령 조합",
+        "content": "tar -czf backup.tar.gz /etc        : gzip 압축 아카이브 생성\ntar -cjf backup.tar.bz2 /etc       : bzip2 압축 아카이브 생성\ntar -xzf backup.tar.gz -C /tmp     : /tmp에 gzip 해제\ntar -tzf backup.tar.gz             : 내용 목록만 확인\ntar -xzf backup.tar.gz etc/hosts   : 특정 파일만 해제"
+      },
+      {
+        "heading": "단독 압축 명령어",
+        "content": "gzip file       : file.gz 생성 (원본 삭제)\ngzip -d file.gz : 압축 해제 (= gunzip)\nbzip2 file      : file.bz2 생성\nxz file         : file.xz 생성 (압축률 가장 높음)\nzcat file.gz    : 압축 해제 없이 내용 출력"
+      }
+    ],
+    "relatedQuestionIds": ["arch-001", "arch-002", "arch-003"]
+  },
+  {
+    "id": "c-user-001",
+    "category": "사용자관리",
+    "title": "사용자 및 그룹 관리",
+    "summary": "리눅스는 /etc/passwd, /etc/shadow, /etc/group 파일로 사용자/그룹을 관리합니다.",
+    "sections": [
+      {
+        "heading": "/etc/passwd 구조",
+        "content": "사용자명:패스워드:UID:GID:설명:홈디렉토리:셸\n예: root:x:0:0:root:/root:/bin/bash\nx는 /etc/shadow에 암호화된 패스워드가 있음을 의미\nUID 0: root, 1-999: 시스템계정, 1000+: 일반사용자"
+      },
+      {
+        "heading": "사용자 관리 명령어",
+        "content": "useradd -m -s /bin/bash user    : 홈디렉토리+bash 셸로 계정 생성\nusermod -aG wheel user          : wheel 그룹에 추가\nuserdel -r user                 : 계정+홈디렉토리 삭제\npasswd user                     : 패스워드 변경\nchage -l user                   : 패스워드 만료 정보 확인\nchage -M 90 user                : 패스워드 최대 사용 기간 90일"
+      },
+      {
+        "heading": "그룹 관리 명령어",
+        "content": "groupadd devteam            : 그룹 생성\ngroupdel devteam            : 그룹 삭제\ngroupmod -n newname oldname : 그룹명 변경\ngpasswd -a user group       : 그룹에 사용자 추가\ngpasswd -d user group       : 그룹에서 사용자 제거\ngroups [user]               : 소속 그룹 확인"
+      }
+    ],
+    "relatedQuestionIds": ["user-001", "user-002", "user-003", "user-004"]
+  },
+  {
+    "id": "c-sys-001",
+    "category": "시스템관리",
+    "title": "시스템 관리 및 모니터링",
+    "summary": "시스템 상태 모니터링과 서비스 관리는 리눅스 1급의 핵심 영역입니다.",
+    "sections": [
+      {
+        "heading": "시스템 정보 명령어",
+        "content": "uname -r            : 커널 버전\nuname -a            : 전체 시스템 정보\nhostname            : 호스트 이름\nuptime              : 가동 시간 + 부하 평균\nfree -m             : 메모리 사용량 (MB)\nlscpu               : CPU 정보\nlsblk               : 블록 장치 목록\nlspci               : PCI 장치 목록"
+      },
+      {
+        "heading": "systemd 서비스 관리",
+        "content": "systemctl start sshd        : 서비스 시작\nsystemctl stop sshd         : 서비스 중지\nsystemctl restart sshd      : 재시작\nsystemctl enable sshd       : 부팅 시 자동 시작 등록\nsystemctl disable sshd      : 자동 시작 해제\nsystemctl status sshd       : 상태 확인\nsystemctl list-units        : 유닛 전체 목록"
+      },
+      {
+        "heading": "로그 확인",
+        "content": "journalctl -xe              : 최근 시스템 로그 (상세)\njournalctl -u sshd          : 특정 서비스 로그\ntail -f /var/log/messages   : 시스템 로그 실시간 확인\ntail -f /var/log/secure     : 인증/보안 로그"
+      }
+    ],
+    "relatedQuestionIds": ["sys-001", "sys-002", "sys-003", "sys-004", "sys-005", "sys-006", "sys-007"]
+  }
+]

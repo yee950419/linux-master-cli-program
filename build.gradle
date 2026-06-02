@@ -1,0 +1,37 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group = 'com.linuxmaster'
+version = '1.0.0'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // JSON 파싱
+    implementation 'com.google.code.gson:gson:2.10.1'
+    // CLI 색상 출력
+    implementation 'org.fusesource.jansi:jansi:2.4.1'
+}
+
+application {
+    mainClass = 'com.linuxmaster.Main'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.linuxmaster.Main'
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
