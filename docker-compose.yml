@@ -1,0 +1,21 @@
+services:
+  linux-master:
+    build:
+      context: ./docker/sandbox
+    container_name: linux-master
+    restart: unless-stopped
+    tty: true
+
+  app:
+    build: .
+    container_name: linux-master-cli
+    depends_on:
+      - linux-master
+    stdin_open: true
+    tty: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - progress:/root/.linux-master
+
+volumes:
+  progress:
